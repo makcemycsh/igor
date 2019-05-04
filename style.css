@@ -457,7 +457,7 @@ body {
   cursor             : pointer;
   position           : relative;
   z-index            : 4;
-  margin-top         : 100px;
+  margin-top         : 4em;
   -webkit-transition : 0.3s ease-in-out;
   transition         : 0.3s ease-in-out;
 }
