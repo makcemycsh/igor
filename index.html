@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="style-min.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>🎉 С Днем Рождения! 🎉</title>
+  <script
+    src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8="
+    crossorigin="anonymous"></script>
+</head>
+<body class="birthday">
+<div class="birthday-head float">
+  <h1 class="birthday-title birthday-title__main js-title">Привет Игорь!</h1>
+  <h2 class="birthday-title  birthday-title__subtitle js-title">🎉 Поздравляю с&nbsp;Днём Рождения! 🎉</h2>
+</div>
+<div class="birthday-cake js-cake">
+  <div class="cake-inner">
+    <div class="cake">
+      <div class="sparkler">
+        <div>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="sparkler-stem"></div>
+      <div class="top">
+        <div class="cake-icing">
+          <div class="drip-container">
+            <div class="cake-icing-drip"></div>
+            <div class="cake-icing-drip drip-2"></div>
+            <div class="cake-icing-drip drip-3"></div>
+          </div>
+        </div>
+        <div class="cake-layer"></div>
+        <div class="cake-layer middle-layer"></div>
+        <div class="cake-layer"></div>
+      </div>
+      <div class="cake-icing">
+        <div class="drip-container">
+          <div class="cake-icing-drip"></div>
+          <div class="cake-icing-drip drip-2"></div>
+          <div class="cake-icing-drip drip-3"></div>
+        </div>
+      </div>
+      <div class="cake-layer"></div>
+      <div class="cake-layer middle-layer"></div>
+      <div class="cake-layer"></div>
+    </div>
+  </div>
+</div>
+<div class="birthday-footer">
+  <svg preserveAspectRatio="none" width="1920" height="100%" viewBox="0 0 1920 330" version="1.1">
+    <path class="birthday-wave" fill="#0E011F"
+          d="M140.881198,194.260295 C257.600568,129.32862 342.939626,119.84993 418.009939,203.154617 C493.080251,286.459305 545.728689,70.9046172 636.439626,63.9593047 C727.150564,57.0139922 768.99822,139.670242 858.802907,119.431961 C948.607595,99.1936797 1071.91228,-32.9977266 1243.91228,7.75227342 C1415.91228,48.5022734 1404.10369,208.584305 1508.27166,178.709305 C1612.43963,148.834305 1633.73291,79.913472 1711.63588,98.8569055 C1776.28676,114.577866 1819.96778,221.391836 1889.37253,185.808108 C2017.32661,120.206212 2004.01952,336.769569 2004.01952,336.769569 L271.635881,337 L-149.063338,337 C-149.063338,337 -245.850307,175.637635 -58.0633382,228.867188 C33.8652851,254.92501 64.1722713,236.933925 140.881198,194.260295 Z"></path>
+  </svg>
+</div>
+<canvas class="birthday-canvas birthday-balloons" id="balloons"></canvas>
+<div class="birthday-canvas birthday-firework" id="canvas-firework"></div>
+<script>
+  // cake
+  // https://codepen.io/indyplanets/pen/WXrOYa
+  "use strict";
+
+  (function () {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+
+    for (var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+      window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+      window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] || window[vendors[x] + 'CancelRequestAnimationFrame'];
+    }
+
+    if (!window.requestAnimationFrame) window.requestAnimationFrame = function (callback, element) {
+      var currTime = new Date().getTime();
+      var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+      var id = window.setTimeout(function () {
+        callback(currTime + timeToCall);
+      }, timeToCall);
+      lastTime = currTime + timeToCall;
+      return id;
+    };
+    if (!window.cancelAnimationFrame) window.cancelAnimationFrame = function (id) {
+      clearTimeout(id);
+    };
+  })();
+</script>
+<script>
+  "use strict";
+
+  (function randomCake() {
+    var cake = document.querySelector('.cake');
+    var container = document.querySelector('.birthday-cake');
+    var randoButton = document.querySelector('.js-cake');
+    var delay = 1200;
+    var cakes = ['default-cake', 'chocolate-cake', 'strawberry-cake', 'pistachio-cake', 'red-velvet-cake'];
+    var animate = false;
+    var firstAnimate = true;
+    randoButton.addEventListener('click', function () {
+      if (!animate) {
+        animate = true;
+        firstAnimate ? randomInit() : setTimeout(function () {
+          animate = false;
+          randomInit();
+        }, delay);
+      }
+    }, false);
+
+    function randomInit() {
+      firstAnimate = false;
+      cake.classList.add("bounce-cake");
+      var currentCake = container.classList[1];
+      setTimeout(function () {
+        return container.classList.replace(currentCake, getRandomCake());
+      }, 820);
+      setTimeout(function () {
+        return cake.classList.remove("bounce-cake");
+      }, delay);
+      setTimeout(function () {
+        firstAnimate = true;
+        animate = false;
+      }, delay);
+
+      function getRandomCake() {
+        var random = cakes[Math.floor(Math.random() * cakes.length)];
+        return random === currentCake ? getRandomCake() : random;
+      }
+    }
+
+    randomInit();
+  })();
+</script>
+<script>
+  // Шарики
+  const canvas = document.getElementById("balloons");
+  const context = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let ballons = [];
+  let colors = ["#152659", "#3671BF", "#F28F79", "#F24444", "#F25E5E"];
+  let NUM = 8;
+  let swing = 10;
+
+  const Balloon = function (x, y, dx, dy, r, col, length) {
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.r = r;
+    this.degree = 0;
+    this.color = col;
+    this.length = length;
+    this.draw = function () {
+      context.beginPath();
+      context.fillStyle = this.color;
+      context.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      context.fill();
+      context.moveTo(this.x, this.y + this.r);
+      context.lineTo(
+        this.x + Math.cos(this.degree) * -swing,
+        this.y + this.length
+      );
+      context.strokeStyle = "rgba(255,255,255,0.5)";
+      context.stroke();
+      context.closePath();
+    };
+    this.update = function () {
+      this.x += Math.cos(this.degree) * 1.6;
+      if (this.y < -this.r - this.length) this.y = canvas.height + r * Math.random();
+      this.y -= this.dy;
+      this.degree += 0.1 * Math.random();
+      this.draw();
+    };
+  };
+
+  function init() {
+    console.log('init');
+    for (i = 0; i < NUM; i++) {
+      let dy = Math.floor(Math.random() * 5) + 1;
+      let r = dy > 3 ? 40 : dy > 2 ? 30 : 20;
+      let l = dy > 3 ? 100 : dy > 2 ? 80 : 70;
+      let c = colors[Math.floor(Math.random() * colors.length)];
+      ballons.push(
+        new Balloon(
+          Math.random() * canvas.width,
+          canvas.height,
+          1,
+          dy,
+          r,
+          c,
+          l
+        )
+      );
+    }
+    ballons.sort(function (a, b) {
+      return a.r - b.r;
+    });
+    animate();
+  }
+
+  function animate() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    ballons.forEach(val => {
+      val.update();
+    });
+    requestAnimationFrame(animate);
+  }
+
+  window.onload = init();
+
+</script>
+<script>
+  // Хотел бы я и сам такое сделать, но увы, взял отсюда  ↓
+  // https://codepen.io/jasonheron/pen/lEhtk
+  var Fireworks = function () {
+    /*=============================================================================*/
+    /* Utility
+    /*=============================================================================*/
+    var self = this;
+    var rand = function (rMi, rMa) {return ~~((Math.random() * (rMa - rMi + 1)) + rMi);}
+    var hitTest = function (x1, y1, w1, h1, x2, y2, w2, h2) {return !(x1 + w1 < x2 || x2 + w2 < x1 || y1 + h1 < y2 || y2 + h2 < y1);};
+    window.requestAnimFrame = function () {return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (a) {window.setTimeout(a, 1E3 / 60)}}();
+
+    /*=============================================================================*/
+    /* Initialize
+    /*=============================================================================*/
+    self.init = function () {
+      self.dt = 0;
+      self.oldTime = Date.now();
+      self.canvas = document.createElement('canvas');
+      self.canvas.classList.add('birthday-firework');
+      self.canvasContainer = $('#canvas-firework');
+
+      var canvasContainerDisabled = document.getElementById('canvas-firework');
+      self.canvas.onselectstart = function () {
+        return false;
+      };
+      self.canvas.width = self.cw = window.innerWidth;
+      self.canvas.height = self.ch = window.innerHeight;
+
+      self.particles = [];
+      self.partCount = 30;
+      self.fireworks = [];
+      self.mx = self.cw / 2;
+      self.my = self.ch / 2;
+      self.currentHue = 170;
+      self.partSpeed = 5;
+      self.partSpeedVariance = 10;
+      self.partWind = 50;
+      self.partFriction = 5;
+      self.partGravity = 1;
+      self.hueMin = 150;
+      self.hueMax = 200;
+      self.fworkSpeed = 2;
+      self.fworkAccel = 4;
+      self.hueVariance = 30;
+      self.flickerDensity = 20;
+      self.showShockwave = false;
+      self.showTarget = true;
+      self.clearAlpha = 25;
+
+      self.canvasContainer.append(self.canvas);
+      self.ctx = self.canvas.getContext('2d');
+      self.ctx.lineCap = 'round';
+      self.ctx.lineJoin = 'round';
+      self.lineWidth = 1;
+      self.bindEvents();
+      self.canvasLoop();
+
+      self.canvas.onselectstart = function () {
+        return false;
+      };
+
+
+    };
+
+    /*=============================================================================*/
+    /* Particle Constructor
+    /*=============================================================================*/
+    var Particle = function (x, y, hue) {
+      this.x = x;
+      this.y = y;
+      this.coordLast = [
+        {x: x, y: y},
+        {x: x, y: y},
+        {x: x, y: y}
+      ];
+      this.angle = rand(0, 360);
+      this.speed = rand(((self.partSpeed - self.partSpeedVariance) <= 0) ? 1 : self.partSpeed - self.partSpeedVariance, (self.partSpeed + self.partSpeedVariance));
+      this.friction = 1 - self.partFriction / 100;
+      this.gravity = self.partGravity / 2;
+      this.hue = rand(hue - self.hueVariance, hue + self.hueVariance);
+      this.brightness = rand(50, 80);
+      this.alpha = rand(40, 100) / 100;
+      this.decay = rand(10, 50) / 1000;
+      this.wind = (rand(0, self.partWind) - (self.partWind / 2)) / 25;
+      this.lineWidth = self.lineWidth;
+    };
+
+    Particle.prototype.update = function (index) {
+      var radians = this.angle * Math.PI / 180;
+      var vx = Math.cos(radians) * this.speed;
+      var vy = Math.sin(radians) * this.speed + this.gravity;
+      this.speed *= this.friction;
+
+      this.coordLast[2].x = this.coordLast[1].x;
+      this.coordLast[2].y = this.coordLast[1].y;
+      this.coordLast[1].x = this.coordLast[0].x;
+      this.coordLast[1].y = this.coordLast[0].y;
+      this.coordLast[0].x = this.x;
+      this.coordLast[0].y = this.y;
+
+      this.x += vx * self.dt;
+      this.y += vy * self.dt;
+
+      this.angle += this.wind;
+      this.alpha -= this.decay;
+
+      if (!hitTest(0, 0, self.cw, self.ch, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2) || this.alpha < .05) {
+        self.particles.splice(index, 1);
+      }
+    };
+
+    Particle.prototype.draw = function () {
+      var coordRand = (rand(1, 3) - 1);
+      self.ctx.beginPath();
+      self.ctx.moveTo(Math.round(this.coordLast[coordRand].x), Math.round(this.coordLast[coordRand].y));
+      self.ctx.lineTo(Math.round(this.x), Math.round(this.y));
+      self.ctx.closePath();
+      self.ctx.strokeStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + this.alpha + ')';
+      self.ctx.stroke();
+
+      if (self.flickerDensity > 0) {
+        var inverseDensity = 50 - self.flickerDensity;
+        if (rand(0, inverseDensity) === inverseDensity) {
+          self.ctx.beginPath();
+          self.ctx.arc(Math.round(this.x), Math.round(this.y), rand(this.lineWidth, this.lineWidth + 3) / 2, 0, Math.PI * 2, false)
+          self.ctx.closePath();
+          var randAlpha = rand(50, 100) / 100;
+          self.ctx.fillStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + randAlpha + ')';
+          self.ctx.fill();
+        }
+      }
+    };
+
+    /*=============================================================================*/
+    /* Create Particles
+    /*=============================================================================*/
+    self.createParticles = function (x, y, hue) {
+      var countdown = self.partCount;
+      while (countdown--) {
+        self.particles.push(new Particle(x, y, hue));
+      }
+    };
+
+    /*=============================================================================*/
+    /* Update Particles
+    /*=============================================================================*/
+    self.updateParticles = function () {
+      var i = self.particles.length;
+      while (i--) {
+        var p = self.particles[i];
+        p.update(i);
+      }
+      ;
+    };
+
+    /*=============================================================================*/
+    /* Draw Particles
+    /*=============================================================================*/
+    self.drawParticles = function () {
+      var i = self.particles.length;
+      while (i--) {
+        var p = self.particles[i];
+        p.draw();
+      }
+      ;
+    };
+
+    /*=============================================================================*/
+    /* Firework Constructor
+    /*=============================================================================*/
+    var Firework = function (startX, startY, targetX, targetY) {
+      this.x = startX;
+      this.y = startY;
+      this.startX = startX;
+      this.startY = startY;
+      this.hitX = false;
+      this.hitY = false;
+      this.coordLast = [
+        {x: startX, y: startY},
+        {x: startX, y: startY},
+        {x: startX, y: startY}
+      ];
+      this.targetX = targetX;
+      this.targetY = targetY;
+      this.speed = self.fworkSpeed;
+      this.angle = Math.atan2(targetY - startY, targetX - startX);
+      this.shockwaveAngle = Math.atan2(targetY - startY, targetX - startX) + (90 * (Math.PI / 180));
+      this.acceleration = self.fworkAccel / 100;
+      this.hue = self.currentHue;
+      this.brightness = rand(50, 80);
+      this.alpha = rand(50, 100) / 100;
+      this.lineWidth = self.lineWidth;
+      this.targetRadius = 1;
+    };
+
+    Firework.prototype.update = function (index) {
+      self.ctx.lineWidth = this.lineWidth;
+
+      vx = Math.cos(this.angle) * this.speed,
+        vy = Math.sin(this.angle) * this.speed;
+      this.speed *= 1 + this.acceleration;
+      this.coordLast[2].x = this.coordLast[1].x;
+      this.coordLast[2].y = this.coordLast[1].y;
+      this.coordLast[1].x = this.coordLast[0].x;
+      this.coordLast[1].y = this.coordLast[0].y;
+      this.coordLast[0].x = this.x;
+      this.coordLast[0].y = this.y;
+
+      if (self.showTarget) {
+        if (this.targetRadius < 8) {
+          this.targetRadius += .25 * self.dt;
+        } else {
+          this.targetRadius = 1 * self.dt;
+        }
+      }
+
+      if (this.startX >= this.targetX) {
+        if (this.x + vx <= this.targetX) {
+          this.x = this.targetX;
+          this.hitX = true;
+        } else {
+          this.x += vx * self.dt;
+        }
+      } else {
+        if (this.x + vx >= this.targetX) {
+          this.x = this.targetX;
+          this.hitX = true;
+        } else {
+          this.x += vx * self.dt;
+        }
+      }
+
+      if (this.startY >= this.targetY) {
+        if (this.y + vy <= this.targetY) {
+          this.y = this.targetY;
+          this.hitY = true;
+        } else {
+          this.y += vy * self.dt;
+        }
+      } else {
+        if (this.y + vy >= this.targetY) {
+          this.y = this.targetY;
+          this.hitY = true;
+        } else {
+          this.y += vy * self.dt;
+        }
+      }
+
+      if (this.hitX && this.hitY) {
+        var randExplosion = rand(0, 9);
+        self.createParticles(this.targetX, this.targetY, this.hue);
+        self.fireworks.splice(index, 1);
+      }
+    };
+
+    Firework.prototype.draw = function () {
+      self.ctx.lineWidth = this.lineWidth;
+
+      var coordRand = (rand(1, 3) - 1);
+      self.ctx.beginPath();
+      self.ctx.moveTo(Math.round(this.coordLast[coordRand].x), Math.round(this.coordLast[coordRand].y));
+      self.ctx.lineTo(Math.round(this.x), Math.round(this.y));
+      self.ctx.closePath();
+      self.ctx.strokeStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + this.alpha + ')';
+      self.ctx.stroke();
+
+      if (self.showTarget) {
+        self.ctx.save();
+        self.ctx.beginPath();
+        self.ctx.arc(Math.round(this.targetX), Math.round(this.targetY), this.targetRadius, 0, Math.PI * 2, false)
+        self.ctx.closePath();
+        self.ctx.lineWidth = 1;
+        self.ctx.stroke();
+        self.ctx.restore();
+      }
+
+      if (self.showShockwave) {
+        self.ctx.save();
+        self.ctx.translate(Math.round(this.x), Math.round(this.y));
+        self.ctx.rotate(this.shockwaveAngle);
+        self.ctx.beginPath();
+        self.ctx.arc(0, 0, 1 * (this.speed / 5), 0, Math.PI, true);
+        self.ctx.strokeStyle = 'hsla(' + this.hue + ', 100%, ' + this.brightness + '%, ' + rand(25, 60) / 100 + ')';
+        self.ctx.lineWidth = this.lineWidth;
+        self.ctx.stroke();
+        self.ctx.restore();
+      }
+    };
+
+    /*=============================================================================*/
+    /* Create Fireworks
+    /*=============================================================================*/
+    self.createFireworks = function (startX, startY, targetX, targetY) {
+      self.fireworks.push(new Firework(startX, startY, targetX, targetY));
+    };
+
+    /*=============================================================================*/
+    /* Update Fireworks
+    /*=============================================================================*/
+    self.updateFireworks = function () {
+      var i = self.fireworks.length;
+      while (i--) {
+        var f = self.fireworks[i];
+        f.update(i);
+      }
+      ;
+    };
+
+    /*=============================================================================*/
+    /* Draw Fireworks
+    /*=============================================================================*/
+    self.drawFireworks = function () {
+      var i = self.fireworks.length;
+      while (i--) {
+        var f = self.fireworks[i];
+        f.draw();
+      }
+      ;
+    };
+
+    /*=============================================================================*/
+    /* Events
+    /*=============================================================================*/
+    self.bindEvents = function () {
+      $(window).on('resize', function () {
+        clearTimeout(self.timeout);
+        self.timeout = setTimeout(function () {
+          self.ctx.lineCap = 'round';
+          self.ctx.lineJoin = 'round';
+        }, 100);
+      });
+
+      $(self.canvas).on('mousedown', function (e) {
+        var randLaunch = rand(0, 5);
+        self.mx = e.pageX - self.canvasContainer.offset().left;
+        self.my = e.pageY - self.canvasContainer.offset().top;
+        self.currentHue = rand(self.hueMin, self.hueMax);
+        self.createFireworks(self.cw / 2, self.ch, self.mx, self.my);
+
+        $(self.canvas).on('mousemove.fireworks', function (e) {
+          var randLaunch = rand(0, 5);
+          self.mx = e.pageX - self.canvasContainer.offset().left;
+          self.my = e.pageY - self.canvasContainer.offset().top;
+          self.currentHue = rand(self.hueMin, self.hueMax);
+          self.createFireworks(self.cw / 2, self.ch, self.mx, self.my);
+        });
+
+      });
+
+      $(self.canvas).on('mouseup', function (e) {
+        $(self.canvas).off('mousemove.fireworks');
+      });
+
+    }
+
+    /*=============================================================================*/
+    /* Clear Canvas
+    /*=============================================================================*/
+    self.clear = function () {
+      self.particles = [];
+      self.fireworks = [];
+      self.ctx.clearRect(0, 0, self.cw, self.ch);
+    };
+
+    /*=============================================================================*/
+    /* Delta
+    /*=============================================================================*/
+    self.updateDelta = function () {
+      var newTime = Date.now();
+      self.dt = (newTime - self.oldTime) / 16;
+      self.dt = (self.dt > 5) ? 5 : self.dt;
+      self.oldTime = newTime;
+    }
+
+    /*=============================================================================*/
+    /* Main Loop
+    /*=============================================================================*/
+    self.canvasLoop = function () {
+      requestAnimFrame(self.canvasLoop, self.canvas);
+      self.updateDelta();
+      self.ctx.globalCompositeOperation = 'destination-out';
+      self.ctx.fillStyle = 'rgba(0,0,0,' + self.clearAlpha / 100 + ')';
+      self.ctx.fillRect(0, 0, self.cw, self.ch);
+      self.ctx.globalCompositeOperation = 'lighter';
+      self.updateFireworks();
+      self.updateParticles();
+      self.drawFireworks();
+      self.drawParticles();
+    };
+
+    self.init();
+
+    setInterval(function () {
+      self.fireworks.push(new Firework(self.cw / 2, self.ch, rand(10, self.cw - 10), rand(10, self.ch / 2) - 10));
+    }, Math.random() * 200 + 500);
+  }
+
+  /*=============================================================================*/
+  /* GUI
+  /*=============================================================================*/
+  var guiPresets = {
+    "preset": "Nimble",
+    "remembered": {
+      "Default": {
+        "0": {
+          "fworkSpeed": 2,
+          "fworkAccel": 4,
+          "showShockwave": false,
+          "showTarget": true,
+          "partCount": 30,
+          "partSpeed": 5,
+          "partSpeedVariance": 10,
+          "partWind": 50,
+          "partFriction": 5,
+          "partGravity": 1,
+          "flickerDensity": 20,
+          "hueMin": 150,
+          "hueMax": 200,
+          "hueVariance": 30,
+          "lineWidth": 1,
+          "clearAlpha": 25
+        }
+      },
+      "Anti Gravity": {
+        "0": {
+          "fworkSpeed": 4,
+          "fworkAccel": 10,
+          "showShockwave": true,
+          "showTarget": false,
+          "partCount": 150,
+          "partSpeed": 5,
+          "partSpeedVariance": 10,
+          "partWind": 10,
+          "partFriction": 10,
+          "partGravity": -10,
+          "flickerDensity": 30,
+          "hueMin": 0,
+          "hueMax": 360,
+          "hueVariance": 30,
+          "lineWidth": 1,
+          "clearAlpha": 50
+        }
+      },
+      "Battle Field": {
+        "0": {
+          "fworkSpeed": 10,
+          "fworkAccel": 20,
+          "showShockwave": true,
+          "showTarget": true,
+          "partCount": 200,
+          "partSpeed": 30,
+          "partSpeedVariance": 5,
+          "partWind": 0,
+          "partFriction": 5,
+          "partGravity": 0,
+          "flickerDensity": 0,
+          "hueMin": 20,
+          "hueMax": 30,
+          "hueVariance": 10,
+          "lineWidth": 1,
+          "clearAlpha": 40
+        }
+      },
+      "Mega Blast": {
+        "0": {
+          "fworkSpeed": 3,
+          "fworkAccel": 3,
+          "showShockwave": true,
+          "showTarget": true,
+          "partCount": 500,
+          "partSpeed": 50,
+          "partSpeedVariance": 5,
+          "partWind": 0,
+          "partFriction": 0,
+          "partGravity": 0,
+          "flickerDensity": 0,
+          "hueMin": 0,
+          "hueMax": 360,
+          "hueVariance": 30,
+          "lineWidth": 20,
+          "clearAlpha": 20
+        }
+      },
+      "Nimble": {
+        "0": {
+          "fworkSpeed": 5,
+          "fworkAccel": 25,
+          "showShockwave": false,
+          "showTarget": false,
+          "partCount": 120,
+          "partSpeed": 50,
+          "partSpeedVariance": 25,
+          "partWind": 31,
+          "partFriction": 25,
+          "partGravity": 1,
+          "flickerDensity": 30,
+          "hueMin": 0,
+          "hueMax": 360,
+          "hueVariance": 30,
+          "lineWidth": 1,
+          "clearAlpha": 50
+        }
+      },
+      "Slow Launch": {
+        "0": {
+          "fworkSpeed": 2,
+          "fworkAccel": 2,
+          "showShockwave": false,
+          "showTarget": false,
+          "partCount": 200,
+          "partSpeed": 10,
+          "partSpeedVariance": 0,
+          "partWind": 100,
+          "partFriction": 0,
+          "partGravity": 2,
+          "flickerDensity": 50,
+          "hueMin": 0,
+          "hueMax": 360,
+          "hueVariance": 20,
+          "lineWidth": 4,
+          "clearAlpha": 10
+        }
+      },
+      "Perma Trail": {
+        "0": {
+          "fworkSpeed": 4,
+          "fworkAccel": 10,
+          "showShockwave": false,
+          "showTarget": false,
+          "partCount": 150,
+          "partSpeed": 10,
+          "partSpeedVariance": 10,
+          "partWind": 100,
+          "partFriction": 3,
+          "partGravity": 0,
+          "flickerDensity": 0,
+          "hueMin": 0,
+          "hueMax": 360,
+          "hueVariance": 20,
+          "lineWidth": 1,
+          "clearAlpha": 0
+        }
+      }
+    },
+    "closed": false,
+    "folders": {
+      "Fireworks": {
+        "preset": "Default",
+        "closed": true,
+        "folders": {}
+      },
+      "Particles": {
+        "preset": "Default",
+        "closed": true,
+        "folders": {}
+      },
+      "Color": {
+        "preset": "Default",
+        "closed": false,
+        "folders": {}
+      },
+      "Other": {
+        "preset": "Default",
+        "closed": false,
+        "folders": {}
+      }
+    }
+  };
+
+
+  var fworks = new Fireworks();
+  var gui = new dat.GUI({
+    autoPlace: false,
+    load: guiPresets,
+    preset: 'Default'
+  });
+  var customContainer = document.getElementById('gui');
+  customContainer.appendChild(gui.domElement);
+
+  var guiFireworks = gui.addFolder('Fireworks');
+  guiFireworks.add(fworks, 'fworkSpeed').min(1).max(10).step(1);
+  guiFireworks.add(fworks, 'fworkAccel').min(0).max(50).step(1);
+  guiFireworks.add(fworks, 'showShockwave');
+  guiFireworks.add(fworks, 'showTarget');
+
+  var guiParticles = gui.addFolder('Particles');
+  guiParticles.add(fworks, 'partCount').min(0).max(500).step(1);
+  guiParticles.add(fworks, 'partSpeed').min(1).max(100).step(1);
+  guiParticles.add(fworks, 'partSpeedVariance').min(0).max(50).step(1);
+  guiParticles.add(fworks, 'partWind').min(0).max(100).step(1);
+  guiParticles.add(fworks, 'partFriction').min(0).max(50).step(1);
+  guiParticles.add(fworks, 'partGravity').min(-20).max(20).step(1);
+  guiParticles.add(fworks, 'flickerDensity').min(0).max(50).step(1);
+
+  var guiColor = gui.addFolder('Color');
+  guiColor.add(fworks, 'hueMin').min(0).max(360).step(1);
+  guiColor.add(fworks, 'hueMax').min(0).max(360).step(1);
+  guiColor.add(fworks, 'hueVariance').min(0).max(180).step(1);
+
+  var guiOther = gui.addFolder('Other');
+  guiOther.add(fworks, 'lineWidth').min(1).max(20).step(1);
+  guiOther.add(fworks, 'clearAlpha').min(0).max(100).step(1);
+  guiOther.add(fworks, 'clear').name('Clear');
+
+  gui.remember(fworks);
+</script>
+</body>
+</html>
